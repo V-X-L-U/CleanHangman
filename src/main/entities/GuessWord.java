@@ -39,25 +39,29 @@ public class GuessWord {
     }
 
     /**
-     * Update and return guess view given a new user guess.
+     * Updates the guess view and returns whether it has changed.
      *
-     * @return the updated guess view.
+     * @return whether a letter was correctly guessed
      * @throws InvalidGuessException If the guess is not a single alphabet [a-zA-Z]
      */
-    String updateGuessView(char guess) throws InvalidGuessException {
+    boolean updateGuessView(char guess) throws InvalidGuessException {
         if (alphabet.indexOf(guess) == -1) throw new InvalidGuessException();
 
         StringBuilder newGuessView = new StringBuilder();
 
+        boolean guessedCorrectly = false;
         for (int i = 0; i < guessView.length(); i++) {
             if (guessView.charAt(i) == '-') {
-                if (guess == word.charAt(i)) newGuessView.append(guess);
+                if (guess == word.charAt(i)) {
+                    guessedCorrectly = true;
+                    newGuessView.append(guess);
+                }
             } else {  // already revealed
                 newGuessView.append(guessView.charAt(i));
             }
         }
 
         guessView = newGuessView.toString();
-        return guessView;
+        return guessedCorrectly;
     }
 }
