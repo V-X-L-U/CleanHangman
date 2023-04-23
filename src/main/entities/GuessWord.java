@@ -55,7 +55,8 @@ public class GuessWord {
                 if (guess == word.charAt(i)) {
                     guessedCorrectly = true;
                     newGuessView.append(guess);
-                }
+                } else
+                    newGuessView.append('-');
             } else {  // already revealed
                 newGuessView.append(guessView.charAt(i));
             }
