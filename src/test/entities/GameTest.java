@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import src.core_exceptions.InvalidGuessException;
 import src.main.entities.Game;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
