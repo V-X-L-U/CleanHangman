@@ -86,8 +86,6 @@ public class GuessWordTest {
     @Disabled("Not yet implemented")
     @DisplayName("All words must comprise of only [a-z]")
     void testCapitalLettersInWord() {
-        GuessWord guessWord = new GuessWord("racecar");
-        assertThrows(InvalidGuessException.class, () -> guessWord.updateGuessView('1'));
-        assertEquals("-------", guessWord.getGuessView());
+        // TODO : implement
     }
 }
