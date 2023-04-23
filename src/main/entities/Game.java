@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class Game {
     private final GuessWord guessWord;
-    private Set<Character> lettersGuessed;
+    private final Set<Character> lettersGuessed;
     private int numWrongGuesses;
 
     /**
