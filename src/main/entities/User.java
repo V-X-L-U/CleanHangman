@@ -4,6 +4,9 @@ public class User {
     private String userName;
     private int numSuccess;
 
+    /**
+     * Initializes this user with {@code userName}. Number of successful guesses initialized to 0.
+     * */
     public User(String userName) {
         numSuccess = 0;
     }
