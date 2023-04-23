@@ -26,9 +26,9 @@ public class Game {
      *
      * @return whether the guess was correct
      * */
-    boolean makeGuess(char guess) throws InvalidGuessException {
-        lettersGuessed.add(guess);
+    public boolean makeGuess(char guess) throws InvalidGuessException {
         boolean guessCorrect = guessWord.updateGuessView(guess);
+        lettersGuessed.add(guess);
         if (!guessCorrect) numWrongGuesses += 1;
         return guessCorrect;
     }
@@ -38,7 +38,7 @@ public class Game {
      *
      * @return list of all letters already guessed
      * */
-    Set<Character> getLettersGuessed() {
+    public Set<Character> getLettersGuessed() {
         return new HashSet<Character>(lettersGuessed);
     }
 
@@ -47,17 +47,17 @@ public class Game {
      *
      * @return the current guess view for this game.
      * */
-    String getGuessView() {
+    public String getGuessView() {
         return guessWord.getGuessView();
     }
 
     /**
      * Returns the number of guesses the user has gotten wrong in the game. Wrong letters that have been guessed
-     * still count as a wrong guess.
+     * still count as a wrong guess. Invalid guesses are not counted.
      *
      * @return how many guesses were wrong
      * */
-    int getNumWrongGuesses() {
+    public int getNumWrongGuesses() {
         return numWrongGuesses;
     }
 }
