@@ -24,7 +24,7 @@ public class GuessWord {
      *
      * @return word to be guessed.
      */
-    String getWord() {
+    public String getWord() {
         return word;
     }
 
@@ -34,7 +34,7 @@ public class GuessWord {
      *
      * @return the current guess view for the word to be guessed.
      */
-    String getGuessView() {
+    public String getGuessView() {
         return guessView;
     }
 
@@ -44,7 +44,7 @@ public class GuessWord {
      * @return whether a letter was correctly guessed
      * @throws InvalidGuessException If the guess is not a single alphabet [a-zA-Z]
      */
-    boolean updateGuessView(char guess) throws InvalidGuessException {
+    public boolean updateGuessView(char guess) throws InvalidGuessException {
         if (alphabet.indexOf(guess) == -1) throw new InvalidGuessException();
 
         StringBuilder newGuessView = new StringBuilder();
