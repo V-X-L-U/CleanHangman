@@ -15,7 +15,7 @@ public class Game {
      * */
     public Game(String wordToGuess) {
         guessWord = new GuessWord(wordToGuess);
-        lettersGuessed = new HashSet<Character>();
+        lettersGuessed = new HashSet<>();
         numWrongGuesses = 0;
     }
 
@@ -39,7 +39,7 @@ public class Game {
      * @return list of all letters already guessed
      * */
     public Set<Character> getLettersGuessed() {
-        return new HashSet<Character>(lettersGuessed);
+        return new HashSet<>(lettersGuessed);
     }
 
     /**
