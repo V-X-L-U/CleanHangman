@@ -7,7 +7,7 @@ public interface WordRepository {
      * Returns a random word to be guessed.
      *
      * @return random word to be guessed
-     * @throws RepoException when retrieving from repository unexpectedly fails (usually I/O-related)
+     * @throws RepoException see {@link RepoException}
      */
     String getRandomWord() throws RepoException;
 }
