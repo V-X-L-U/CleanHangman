@@ -2,7 +2,7 @@
 
 Java Hangman game implemented using Clean Architecture
 
-See UMLs ![here](https://app.diagrams.net/#G1FNpa_FpKb1q6PPdpMBOgtjBByZgz4DaS)
+See UMLs [here](https://drive.google.com/file/d/1FNpa_FpKb1q6PPdpMBOgtjBByZgz4DaS/view?usp=sharing).
 
 ## Requirements
 
