@@ -2,6 +2,8 @@
 
 Java Hangman game implemented using Clean Architecture
 
+See UMLs ![here](https://app.diagrams.net/#G1FNpa_FpKb1q6PPdpMBOgtjBByZgz4DaS)
+
 ## Requirements
 
 - User can create an account (max. 10 users)
