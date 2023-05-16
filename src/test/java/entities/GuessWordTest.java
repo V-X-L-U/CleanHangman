@@ -2,10 +2,10 @@ package entities;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import core_exceptions.InvalidGuessException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import core_exceptions.InvalidGuessException;
 
 public class GuessWordTest {
   @Test

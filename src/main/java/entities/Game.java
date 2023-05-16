@@ -1,8 +1,8 @@
 package entities;
 
+import core_exceptions.InvalidGuessException;
 import java.util.HashSet;
 import java.util.Set;
-import core_exceptions.InvalidGuessException;
 
 public class Game {
   private final GuessWord guessWord;
