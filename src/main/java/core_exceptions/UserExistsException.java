@@ -1,4 +1,4 @@
-package src.core_exceptions;
+package core_exceptions;
 
 public class UserExistsException extends Exception {
   public UserExistsException(String userName) {

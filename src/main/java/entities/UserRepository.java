@@ -1,6 +1,6 @@
-package src.main.entities;
+package entities;
 
-import src.core_exceptions.*;
+import core_exceptions.*;
 
 /** Repository responsible for storing user information. */
 public interface UserRepository {

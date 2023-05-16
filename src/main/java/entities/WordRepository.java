@@ -1,6 +1,6 @@
-package src.main.entities;
+package entities;
 
-import src.core_exceptions.RepoException;
+import core_exceptions.RepoException;
 
 public interface WordRepository {
     /**

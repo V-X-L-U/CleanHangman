@@ -1,4 +1,4 @@
-package src.core_exceptions;
+package core_exceptions;
 
 public class FirstUserException extends Exception {
   public FirstUserException(String operation) {

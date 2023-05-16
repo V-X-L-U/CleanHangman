@@ -1,4 +1,4 @@
-package src.core_exceptions;
+package core_exceptions;
 
 /**
  * Thrown when a repository fails to perform an operation due to reasons that are beyond the scope

@@ -1,4 +1,4 @@
-package src.core_exceptions;
+package core_exceptions;
 
 public class NotPermittedException extends Exception {
   public NotPermittedException(String operation, String requiredPermissions) {
