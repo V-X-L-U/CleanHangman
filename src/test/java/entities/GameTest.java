@@ -36,7 +36,7 @@ public class GameTest {
     Game game = new Game("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
-      assertFalse(game.makeGuess('e'));
+      assertTrue(game.makeGuess('e'));
       expectedLettersGuessed.add('e');
       assertGameState(game, "---e---", expectedLettersGuessed, 0);
     } catch (InvalidGuessException e) {
