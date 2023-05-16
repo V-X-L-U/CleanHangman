@@ -36,7 +36,7 @@ public class GameTest {
     Game game = new Game("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
-      game.makeGuess('e');
+      assertTrue(game.makeGuess('e'));
       expectedLettersGuessed.add('e');
       assertGameState(game, "---e---", expectedLettersGuessed, 0);
     } catch (InvalidGuessException e) {
@@ -64,13 +64,13 @@ public class GameTest {
     Game game = new Game("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
-      game.makeGuess('a');
+      assertTrue(game.makeGuess('a'));
       expectedLettersGuessed.add('a');
       assertGameState(game, "-a---a-", expectedLettersGuessed, 0);
-      game.makeGuess('e');
+      assertTrue(game.makeGuess('e'));
       expectedLettersGuessed.add('e');
       assertGameState(game, "-a-e-a-", expectedLettersGuessed, 0);
-      game.makeGuess('c');
+      assertTrue(game.makeGuess('c'));
       expectedLettersGuessed.add('c');
       assertGameState(game, "-aceca-", expectedLettersGuessed, 0);
     } catch (InvalidGuessException e) {
@@ -84,7 +84,7 @@ public class GameTest {
     Game game = new Game("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
-      game.makeGuess('z');
+      assertFalse(game.makeGuess('z'));
       expectedLettersGuessed.add('z');
       assertGameState(game, "-------", expectedLettersGuessed, 1);
     } catch (InvalidGuessException e) {
@@ -98,13 +98,13 @@ public class GameTest {
     Game game = new Game("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
-      game.makeGuess('z');
+      assertFalse(game.makeGuess('z'));
       expectedLettersGuessed.add('z');
       assertGameState(game, "-------", expectedLettersGuessed, 1);
-      game.makeGuess('z');
+      assertFalse(game.makeGuess('z'));
       expectedLettersGuessed.add('z');
       assertGameState(game, "-------", expectedLettersGuessed, 2);
-      game.makeGuess('v');
+      assertFalse(game.makeGuess('v'));
       expectedLettersGuessed.add('v');
       assertGameState(game, "-------", expectedLettersGuessed, 3);
     } catch (InvalidGuessException e) {
@@ -116,7 +116,7 @@ public class GameTest {
   @DisplayName("Single Invalid Guess")
   void testSingleInvalidGuess() {
     Game game = new Game("racecar");
-    assertThrows(InvalidGuessException.class, () -> game.makeGuess('&'));
+    assertThrows(InvalidGuessException.class, () -> assertFalse(game.makeGuess('&')));
     // invalid guesses are not counted in lettersGuessed
     Set<Character> expectedLettersGuessed = new HashSet<>();
     assertGameState(game, "-------", expectedLettersGuessed, 0);
@@ -128,18 +128,18 @@ public class GameTest {
     Game game = new Game("moonlight");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
-      game.makeGuess('z');
+      assertFalse(game.makeGuess('z'));
       expectedLettersGuessed.add('z');
       assertGameState(game, "---------", expectedLettersGuessed, 1);
 
-      game.makeGuess('o');
+      assertTrue(game.makeGuess('o'));
       expectedLettersGuessed.add('o');
       assertGameState(game, "-oo------", expectedLettersGuessed, 1);
     } catch (InvalidGuessException e) {
       fail("Unexpected guess exception");
     }
 
-    assertThrows(InvalidGuessException.class, () -> game.makeGuess(')'));
+    assertThrows(InvalidGuessException.class, () -> assertFalse(game.makeGuess(')')));
     assertGameState(game, "-oo------", expectedLettersGuessed, 1);
   }
 }
