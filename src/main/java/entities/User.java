@@ -3,10 +3,17 @@ package entities;
 public class User {
   private String userName;
   private int numSuccess;
+  private boolean isRoot;
 
   /** Initializes this user with {@code userName}. Number of successful guesses initialized to 0. */
   public User(String userName) {
     numSuccess = 0;
+  }
+
+  public User(String userName, int wordsSuccessfullyGuessed, boolean isRoot) {
+    this.userName = userName;
+    numSuccess = wordsSuccessfullyGuessed;
+    this.isRoot = isRoot;
   }
 
   /**
@@ -14,7 +21,7 @@ public class User {
    *
    * @return this user's name.
    */
-  String getUserName() {
+  public String getUserName() {
     return userName;
   }
 
@@ -23,12 +30,19 @@ public class User {
    *
    * @return this user's number of successful games.
    */
-  int getNumSuccess() {
+  public int getNumSuccess() {
     return numSuccess;
   }
 
   /** Records that the user has successfully guessed another word. */
-  void incNumSuccess() {
+  public void incNumSuccess() {
     numSuccess += 1;
   }
+
+  /**
+   * Returns whether this user has root permissions.
+   *
+   * @return whether user has root permissions.
+   */
+  public boolean getIsRoot() { return isRoot; }
 }
