@@ -4,7 +4,7 @@ public class User
 {
     private String userName;
     private int numSuccess;
-    private boolean isRoot;
+    private final boolean isRoot;
 
     /**
      * Initializes this user with {@code userName}. Number of successful guesses initialized to 0.
@@ -12,6 +12,7 @@ public class User
     public User(String userName)
     {
         numSuccess = 0;
+        isRoot = false;
     }
 
     public User(String userName, int wordsSuccessfullyGuessed, boolean isRoot)

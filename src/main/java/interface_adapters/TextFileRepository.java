@@ -73,11 +73,11 @@ public class TextFileRepository implements UserRepository, WordRepository
     {
         String userRecordPattern = "([a-zA-Z0-9]+)#([0-9]+)#([YN])";
         Matcher userRecordMatcher = Pattern.compile(userRecordPattern).matcher(userRecord);
-        if (userRecordMatcher.groupCount() != 3) throw new RepoException(String.format("Invalid user Record found: %s", userRecord));
+        if (userRecordMatcher.groupCount() != 3) throw new RepoException(String.format("Invalid user record found: %s", userRecord));
 
-        String userName = userRecordMatcher.group();
-        int numWordsSuccessfullyGuessed = Integer.parseInt(userRecordMatcher.group(1));
-        boolean isFirstUser = userRecordMatcher.group(2).equals("Y");
+        String userName = userRecordMatcher.group(1);
+        int numWordsSuccessfullyGuessed = Integer.parseInt(userRecordMatcher.group(2));
+        boolean isFirstUser = userRecordMatcher.group(3).equals("Y");
 
         return new User(userName, numWordsSuccessfullyGuessed, isFirstUser);
     }
@@ -96,16 +96,20 @@ public class TextFileRepository implements UserRepository, WordRepository
             while (lineRead != null)
             {
                 User userFromRecord = instantiateUserFromRecord(lineRead);
-                if (userFromRecord.getUserName().equals(userName)) return userFromRecord;
+                if (userFromRecord.getUserName().equals(userName))
+                {
+                    wordBankReader.close();
+                    return userFromRecord;
+                }
                 lineRead = wordBankReader.readLine();
             }
             wordBankReader.close();
+            return null;
         }
         catch (IOException e)
         {
             throw new RepoException(String.format("Could not process user records at %s", usersFile.getAbsolutePath()));
         }
-        return null;
     }
 
     // Returns a user record from `user` and adds a newline.
@@ -114,9 +118,9 @@ public class TextFileRepository implements UserRepository, WordRepository
         return String.format("%s#%d#%s\n", user.getUserName(), user.getNumSuccess(), user.getIsRoot() ? "Y" : "N");
     }
 
-    private void appendLineToFile(String filePath, String line) throws IOException
+    private void appendToFile(String filePath, String line) throws IOException
     {
-        BufferedWriter userRecordsWriter = new BufferedWriter(new FileWriter(filePath));
+        BufferedWriter userRecordsWriter = new BufferedWriter(new FileWriter(filePath, true));
         userRecordsWriter.write(line);
         userRecordsWriter.close();
     }
@@ -130,12 +134,12 @@ public class TextFileRepository implements UserRepository, WordRepository
         User user = findUser(userName);
         if (user != null) throw new UserExistsException(userName);
 
-        User newUser = new User(userName);
         File usersFile = new File(usersFilePath);
-        createFileIfNotExists(usersFile);
+        final boolean usersFileNewlyCreated = createFileIfNotExists(usersFile);
+        User newUser = usersFileNewlyCreated ? new User(userName, 0, true) : new User(userName);
         try
         {
-            appendLineToFile(usersFilePath, userRecordFromUser(newUser));
+            appendToFile(usersFilePath, userRecordFromUser(newUser));
         }
         catch (IOException e)
         {
@@ -175,8 +179,8 @@ public class TextFileRepository implements UserRepository, WordRepository
         {
             try
             {
-                appendLineToFile(wordBankFilePath, "1\n");
-                appendLineToFile(wordBankFilePath, defaultWordToGuess);
+                appendToFile(wordBankFilePath, "1\n");
+                appendToFile(wordBankFilePath, String.format("%s\n", defaultWordToGuess));
                 return defaultWordToGuess;
             }
             catch (IOException e)
@@ -186,12 +190,11 @@ public class TextFileRepository implements UserRepository, WordRepository
         }
 
         String candidateWord = "";
-        BufferedReader wordBankReader;
         try
         {
-            wordBankReader = new BufferedReader(new FileReader(wordBankFilePath));
+            BufferedReader wordBankReader = new BufferedReader(new FileReader(wordBankFilePath));
             candidateWord = wordBankReader.readLine();
-            int numTotalWords = Integer.parseInt(candidateWord.trim());
+            int numTotalWords = Integer.parseInt(candidateWord);
             int wordSelectedIndex = new Random().nextInt(numTotalWords) + 1;
             int currentLineIndex = 1;
             while (candidateWord != null)
@@ -199,7 +202,7 @@ public class TextFileRepository implements UserRepository, WordRepository
                 if (currentLineIndex == wordSelectedIndex)
                 {
                     wordBankReader.close();
-                    return candidateWord.trim();
+                    return candidateWord;
                 }
                 candidateWord = wordBankReader.readLine();
                 currentLineIndex++;
