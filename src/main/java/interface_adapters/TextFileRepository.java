@@ -196,7 +196,8 @@ public class TextFileRepository implements UserRepository, WordRepository
             int currentLineIndex = 1;
             while (candidateWord != null)
             {
-                if (currentLineIndex == wordSelectedIndex) {
+                if (currentLineIndex == wordSelectedIndex)
+                {
                     wordBankReader.close();
                     return candidateWord.trim();
                 }
