@@ -125,6 +125,10 @@ public class TextFileRepository implements UserRepository, WordRepository
         userRecordsWriter.close();
     }
 
+    private boolean isValidWord(String word) {
+        return Pattern.matches("[a-z]{7,21}", word);
+    }
+
     @Override
     public User addUser(String userName) throws InvalidUserNameException, UserExistsException, RepoException
     {
@@ -193,12 +197,15 @@ public class TextFileRepository implements UserRepository, WordRepository
         try
         {
             BufferedReader wordBankReader = new BufferedReader(new FileReader(wordBankFilePath));
+            String firstLine = wordBankReader.readLine();
+            int numTotalWords = Integer.parseInt(firstLine);
+            int wordSelectedIndex = (new Random().nextInt(numTotalWords)) + 1;
             candidateWord = wordBankReader.readLine();
-            int numTotalWords = Integer.parseInt(candidateWord);
-            int wordSelectedIndex = new Random().nextInt(numTotalWords) + 1;
             int currentLineIndex = 1;
             while (candidateWord != null)
             {
+                if (!isValidWord(candidateWord))
+                    throw new RepoException(String.format("Invalid word found: %s", candidateWord));
                 if (currentLineIndex == wordSelectedIndex)
                 {
                     wordBankReader.close();
@@ -215,6 +222,8 @@ public class TextFileRepository implements UserRepository, WordRepository
             if (e instanceof IOException) throw new RepoException(String.format("Could not process word bank at %s", wordBankFile.getAbsolutePath()));
             if (e instanceof NumberFormatException)
                 throw new RepoException(String.format("Unexpected first line for word bank at %s: %s", wordBankFile.getAbsolutePath(), candidateWord));
+            if (e instanceof RepoException)
+                throw (RepoException) e;
             throw new RepoException("Unexpected Exception occurred!");
         }
     }
