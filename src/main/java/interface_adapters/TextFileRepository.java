@@ -15,9 +15,25 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A text-based repository implementation.
+ *
+ * <p>A word bank file is used to store all words that can be guessed.
+ * The first line must be an integer indicating how many words there are in the file.
+ * Each word must be on a new line and be of valid format (see README for the format
+ * of a valid file).</p>
+ *
+ * <p>A user records file is used to store all users in the system. There is currently
+ * no hard limit on the number of users allowed. Instead, this will be subject to the
+ * machine's file system limits. Each line must conform to "([a-zA-Z0-9]+)#([0-9]+)#([YN])\\n".
+ * THe first field is the username, the second field is how many words the user has successfully
+ * guessed. The last field indicates whether a user is the first user (i.e., root).
+ * </p>
+ */
 public class TextFileRepository implements UserRepository, WordRepository
 {
     private final String defaultWordBankFilePath = "../external_interfaces/word_bank.txt";
@@ -57,8 +73,7 @@ public class TextFileRepository implements UserRepository, WordRepository
     {
         String userRecordPattern = "([a-zA-Z0-9]+)#([0-9]+)#([YN])";
         Matcher userRecordMatcher = Pattern.compile(userRecordPattern).matcher(userRecord);
-        if (userRecordMatcher.groupCount() != 3)
-            throw new RepoException(String.format("Invalid user Record found: %s", userRecord));
+        if (userRecordMatcher.groupCount() != 3) throw new RepoException(String.format("Invalid user Record found: %s", userRecord));
 
         String userName = userRecordMatcher.group();
         int numWordsSuccessfullyGuessed = Integer.parseInt(userRecordMatcher.group(1));
@@ -73,8 +88,7 @@ public class TextFileRepository implements UserRepository, WordRepository
     {
         final File usersFile = new File(usersFilePath);
         final boolean usersFileNewlyCreated = createFileIfNotExists(usersFile);
-        if (usersFileNewlyCreated)
-            return null;
+        if (usersFileNewlyCreated) return null;
         try
         {
             BufferedReader wordBankReader = new BufferedReader(new FileReader(usersFile));
@@ -82,28 +96,35 @@ public class TextFileRepository implements UserRepository, WordRepository
             while (lineRead != null)
             {
                 User userFromRecord = instantiateUserFromRecord(lineRead);
-                if (userFromRecord.getUserName().equals(userName))
-                    return userFromRecord;
+                if (userFromRecord.getUserName().equals(userName)) return userFromRecord;
                 lineRead = wordBankReader.readLine();
             }
             wordBankReader.close();
         }
         catch (IOException e)
         {
-            throw new RepoException(String.format("Could not create file %s", usersFile.getAbsolutePath()));
+            throw new RepoException(String.format("Could not process user records at %s", usersFile.getAbsolutePath()));
         }
         return null;
     }
 
+    // Returns a user record from `user` and adds a newline.
     private String userRecordFromUser(User user)
     {
         return String.format("%s#%d#%s\n", user.getUserName(), user.getNumSuccess(), user.getIsRoot() ? "Y" : "N");
     }
 
+    private void appendLineToFile(String filePath, String line) throws IOException
+    {
+        BufferedWriter userRecordsWriter = new BufferedWriter(new FileWriter(filePath));
+        userRecordsWriter.write(line);
+        userRecordsWriter.close();
+    }
+
     @Override
     public User addUser(String userName) throws InvalidUserNameException, UserExistsException, RepoException
     {
-        boolean isValidUserName = Pattern.matches("[a-zA-Z0-9]+", userName);
+        final boolean isValidUserName = Pattern.matches("[a-zA-Z0-9]+", userName);
         if (!isValidUserName) throw new InvalidUserNameException();
 
         User user = findUser(userName);
@@ -114,9 +135,7 @@ public class TextFileRepository implements UserRepository, WordRepository
         createFileIfNotExists(usersFile);
         try
         {
-            BufferedWriter userRecordsWriter = new BufferedWriter(new FileWriter(usersFilePath));
-            userRecordsWriter.write(userRecordFromUser(newUser));
-            userRecordsWriter.close();
+            appendLineToFile(usersFilePath, userRecordFromUser(newUser));
         }
         catch (IOException e)
         {
@@ -149,6 +168,50 @@ public class TextFileRepository implements UserRepository, WordRepository
     @Override
     public String getRandomWord() throws RepoException
     {
-        return null;
+        File wordBankFile = new File(wordBankFilePath);
+        final boolean wordBankNewlyCreated = createFileIfNotExists(wordBankFile);
+        final String defaultWordToGuess = "racecar";
+        if (wordBankNewlyCreated)
+        {
+            try
+            {
+                appendLineToFile(wordBankFilePath, "1\n");
+                appendLineToFile(wordBankFilePath, defaultWordToGuess);
+                return defaultWordToGuess;
+            }
+            catch (IOException e)
+            {
+                throw new RepoException(String.format("Could not add default word to guess at %s", wordBankFile.getAbsolutePath()));
+            }
+        }
+
+        String candidateWord = "";
+        BufferedReader wordBankReader;
+        try
+        {
+            wordBankReader = new BufferedReader(new FileReader(wordBankFilePath));
+            candidateWord = wordBankReader.readLine();
+            int numTotalWords = Integer.parseInt(candidateWord.trim());
+            int wordSelectedIndex = new Random().nextInt(numTotalWords) + 1;
+            int currentLineIndex = 1;
+            while (candidateWord != null)
+            {
+                if (currentLineIndex == wordSelectedIndex) {
+                    wordBankReader.close();
+                    return candidateWord.trim();
+                }
+                candidateWord = wordBankReader.readLine();
+                currentLineIndex++;
+            }
+
+            throw new RepoException(String.format("Selected word index %d out of bounds (total words = %d)", wordSelectedIndex, numTotalWords));
+        }
+        catch (Exception e)
+        {
+            if (e instanceof IOException) throw new RepoException(String.format("Could not process word bank at %s", wordBankFile.getAbsolutePath()));
+            if (e instanceof NumberFormatException)
+                throw new RepoException(String.format("Unexpected first line for word bank at %s: %s", wordBankFile.getAbsolutePath(), candidateWord));
+            throw new RepoException("Unexpected Exception occurred!");
+        }
     }
 }
