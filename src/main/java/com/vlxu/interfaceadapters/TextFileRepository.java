@@ -1,15 +1,5 @@
 package com.vlxu.interfaceadapters;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.vlxu.coreexceptions.FirstUserException;
 import com.vlxu.coreexceptions.InvalidUserNameException;
 import com.vlxu.coreexceptions.NotPermittedException;
@@ -19,6 +9,15 @@ import com.vlxu.coreexceptions.UserNotFoundException;
 import com.vlxu.entities.User;
 import com.vlxu.entities.UserRepository;
 import com.vlxu.entities.WordRepository;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A text-based repository implementation.
@@ -58,7 +57,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
     try {
       return fileToCreate.createNewFile();
     } catch (IOException e) {
-      throw new RepoException(String.format("Could not create file: %s", fileToCreate.getAbsolutePath()));
+      throw new RepoException(
+          String.format("Could not create file: %s", fileToCreate.getAbsolutePath()));
     }
   }
 
@@ -99,13 +99,15 @@ public class TextFileRepository implements UserRepository, WordRepository {
       wordBankReader.close();
       return null;
     } catch (IOException e) {
-      throw new RepoException(String.format("Could not process user records at %s", usersFile.getAbsolutePath()));
+      throw new RepoException(
+          String.format("Could not process user records at %s", usersFile.getAbsolutePath()));
     }
   }
 
   // Returns a user record from `user` and adds a newline.
   private String userRecordFromUser(User user) {
-    return String.format("%s#%d#%s\n", user.getUserName(), user.getNumSuccess(), user.getIsRoot() ? "Y" : "N");
+    return String.format("%s#%d#%s\n", user.getUserName(), user.getNumSuccess(),
+        user.getIsRoot() ? "Y" : "N");
   }
 
   private void appendToFile(String filePath, String line) throws IOException {
@@ -119,7 +121,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
   }
 
   @Override
-  public User addUser(String userName) throws InvalidUserNameException, UserExistsException, RepoException {
+  public User addUser(String userName)
+      throws InvalidUserNameException, UserExistsException, RepoException {
     final boolean isValidUserName = Pattern.matches("[a-zA-Z0-9]+", userName);
     if (!isValidUserName) {
       throw new InvalidUserNameException();
@@ -136,7 +139,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
     try {
       appendToFile(usersFilePath, userRecordFromUser(newUser));
     } catch (IOException e) {
-      throw new RepoException(String.format("Could not append user record at `%s`", usersFile.getAbsolutePath()));
+      throw new RepoException(
+          String.format("Could not append user record at `%s`", usersFile.getAbsolutePath()));
     }
 
     return null;
@@ -174,7 +178,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
         return defaultWordToGuess;
       } catch (IOException e) {
         throw new RepoException(
-            String.format("Could not add default word to guess at %s", wordBankFile.getAbsolutePath()));
+            String.format("Could not add default word to guess at %s",
+                wordBankFile.getAbsolutePath()));
       }
     }
 
@@ -199,7 +204,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
       }
 
       throw new RepoException(
-          String.format("Selected word index %d out of bounds (total words = %d)", wordSelectedIndex,
+          String.format("Selected word index %d out of bounds (total words = %d)",
+              wordSelectedIndex,
               numTotalWords));
     } catch (Exception e) {
       if (e instanceof IOException) {
@@ -208,7 +214,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
       }
       if (e instanceof NumberFormatException) {
         throw new RepoException(
-            String.format("Unexpected first line for word bank at %s: %s", wordBankFile.getAbsolutePath(),
+            String.format("Unexpected first line for word bank at %s: %s",
+                wordBankFile.getAbsolutePath(),
                 candidateWord));
       }
       if (e instanceof RepoException) {

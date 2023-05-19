@@ -1,5 +1,8 @@
 package com.vlxu.entities;
 
+/**
+ * Abstract representation of a Hangman game user.
+ */
 public class User {
   private final boolean isRoot;
   private String userName;
@@ -13,6 +16,15 @@ public class User {
     isRoot = false;
   }
 
+  /**
+   * Initializes a user. Note that this user might not always be new (e.g.,
+   * loaded from repository).
+   *
+   * @param userName the username for the user
+   * @param wordsSuccessfullyGuessed the number of words this user has
+   *                                 successfully guessed
+   * @param isRoot whether this user has root permissions
+   */
   public User(String userName, int wordsSuccessfullyGuessed, boolean isRoot) {
     this.userName = userName;
     numSuccess = wordsSuccessfullyGuessed;

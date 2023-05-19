@@ -6,10 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.vlxu.coreexceptions.InvalidGuessException;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.vlxu.coreexceptions.InvalidGuessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

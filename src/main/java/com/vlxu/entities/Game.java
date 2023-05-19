@@ -1,10 +1,12 @@
 package com.vlxu.entities;
 
+import com.vlxu.coreexceptions.InvalidGuessException;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.vlxu.coreexceptions.InvalidGuessException;
-
+/**
+ * Abstract representation of a Hangman game.
+ */
 public class Game {
   private final GuessWord guessWord;
   private final Set<Character> lettersGuessed;

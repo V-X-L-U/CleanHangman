@@ -2,6 +2,15 @@ package com.vlxu.entities;
 
 import com.vlxu.coreexceptions.InvalidGuessException;
 
+/**
+ * Abstract representation of a word to be guessed.
+ *
+ * <p>
+ * The word-to-guess refers to the actual word being guessed (e.g., "racecar").
+ * The guess view refers to the portion of the word-to-guess that a user has
+ * revealed (e.g., "---e---" if 'e' was correctly guessed).
+ * </p>
+ */
 public class GuessWord {
   private final String word;
   private final String alphabet;
