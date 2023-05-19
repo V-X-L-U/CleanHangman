@@ -1,11 +1,11 @@
 package entities;
 
-import core_exceptions.InvalidGuessException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Game
-{
+import core_exceptions.InvalidGuessException;
+
+public class Game {
     private final GuessWord guessWord;
     private final Set<Character> lettersGuessed;
     private int numWrongGuesses;
@@ -13,8 +13,7 @@ public class Game
     /**
      * Initialize a new game with the word to guess being {@code wordToGuess}.
      */
-    public Game(String wordToGuess)
-    {
+    public Game(String wordToGuess) {
         guessWord = new GuessWord(wordToGuess);
         lettersGuessed = new HashSet<>();
         numWrongGuesses = 0;
@@ -26,11 +25,12 @@ public class Game
      *
      * @return whether the guess was correct
      */
-    public boolean makeGuess(char guess) throws InvalidGuessException
-    {
+    public boolean makeGuess(char guess) throws InvalidGuessException {
         boolean guessCorrect = guessWord.updateGuessView(guess);
         lettersGuessed.add(guess);
-        if (!guessCorrect) numWrongGuesses += 1;
+        if (!guessCorrect) {
+            numWrongGuesses += 1;
+        }
         return guessCorrect;
     }
 
@@ -39,8 +39,7 @@ public class Game
      *
      * @return list of all letters already guessed
      */
-    public Set<Character> getLettersGuessed()
-    {
+    public Set<Character> getLettersGuessed() {
         return new HashSet<>(lettersGuessed);
     }
 
@@ -49,8 +48,7 @@ public class Game
      *
      * @return the current guess view for this game.
      */
-    public String getGuessView()
-    {
+    public String getGuessView() {
         return guessWord.getGuessView();
     }
 
@@ -60,8 +58,7 @@ public class Game
      *
      * @return how many guesses were wrong
      */
-    public int getNumWrongGuesses()
-    {
+    public int getNumWrongGuesses() {
         return numWrongGuesses;
     }
 }

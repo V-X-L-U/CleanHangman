@@ -10,8 +10,7 @@ import core_exceptions.UserNotFoundException;
 /**
  * Repository responsible for storing user information.
  */
-public interface UserRepository
-{
+public interface UserRepository {
 
     /**
      * Registers a new user.

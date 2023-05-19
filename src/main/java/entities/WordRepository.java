@@ -2,8 +2,7 @@ package entities;
 
 import core_exceptions.RepoException;
 
-public interface WordRepository
-{
+public interface WordRepository {
     /**
      * Returns a random word to be guessed.
      *

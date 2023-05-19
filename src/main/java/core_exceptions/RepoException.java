@@ -5,10 +5,8 @@ package core_exceptions;
  * of business rules (i.e., errors/exceptions that are implementation specific). This is most often
  * caused by IO-related issues in the repository implementation.
  */
-public class RepoException extends Exception
-{
-    public RepoException(String cause)
-    {
+public class RepoException extends Exception {
+    public RepoException(String cause) {
         super(cause);
     }
 }

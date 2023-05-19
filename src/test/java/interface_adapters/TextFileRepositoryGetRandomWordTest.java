@@ -1,22 +1,22 @@
 package interface_adapters;
 
-import core_exceptions.RepoException;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TextFileRepositoryGetRandomWordTest
-{
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+
+import core_exceptions.RepoException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+public class TextFileRepositoryGetRandomWordTest {
     @Test
     @DisplayName("Test getting random word from non-existent file")
     void testNewlyCreated() {
@@ -29,9 +29,7 @@ public class TextFileRepositoryGetRandomWordTest
             // test that the default word to guess is returned
             String wordGotten = repo.getRandomWord();
             assertEquals("racecar", wordGotten);
-        }
-        catch (RepoException e)
-        {
+        } catch (RepoException e) {
             fail(e.getMessage());
         }
 
@@ -64,17 +62,14 @@ public class TextFileRepositoryGetRandomWordTest
     @DisplayName("Test getting random word from existing file")
     void testGetRandomWordSuccess() {
         TextFileRepository repo = new TextFileRepository("src/test/resources/NO_EDIT/3random_words.txt", null);
-        try
-        {
+        try {
             String wordGotten = repo.getRandomWord();
             List<String> wordsInBank = new ArrayList<>();
             wordsInBank.add("moonlight");
             wordsInBank.add("sunshine");
             wordsInBank.add("goodbye");
             assertTrue(wordsInBank.contains(wordGotten), String.format("Received %s instead", wordGotten));
-        }
-        catch (RepoException e)
-        {
+        } catch (RepoException e) {
             fail(e.getMessage());
         }
     }
