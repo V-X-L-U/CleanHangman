@@ -149,12 +149,12 @@ public class TextFileRepository implements UserRepository, WordRepository {
   @Override
   public void removeUser(String userName)
       throws FirstUserException, NotPermittedException, UserNotFoundException, RepoException {
-
+    // TODO : implement
   }
 
   @Override
   public void saveUserInfo(User user) throws UserNotFoundException, RepoException {
-
+    // TODO : implement
   }
 
   @Override
