@@ -1,4 +1,4 @@
-package core_exceptions;
+package com.vlxu.coreexceptions;
 
 /**
  * Thrown when a repository fails to perform an operation due to reasons that are beyond the scope
@@ -6,7 +6,7 @@ package core_exceptions;
  * caused by IO-related issues in the repository implementation.
  */
 public class RepoException extends Exception {
-    public RepoException(String cause) {
-        super(cause);
-    }
+  public RepoException(String cause) {
+    super(cause);
+  }
 }
