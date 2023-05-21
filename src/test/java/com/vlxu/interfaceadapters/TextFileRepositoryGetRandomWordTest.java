@@ -19,7 +19,8 @@ public class TextFileRepositoryGetRandomWordTest {
   @Test
   @DisplayName("Test getting random word from non-existent file")
   void testNewlyCreated() {
-    String filePath = "src/test/resources/AUTO_GEN/random_word_new_word_bank.txt";
+    String filePath =
+        "src/test/resources/AUTO_GEN/random_word_new_word_bank.txt";
     File testFile = new File(filePath);
     testFile.delete();
 
@@ -36,7 +37,8 @@ public class TextFileRepositoryGetRandomWordTest {
     String expectedContentsFilePath =
         "src/test/resources/NO_EDIT/expected_new_random_word_bank.txt";
     try {
-      byte[] expected = Files.readAllBytes(new File(expectedContentsFilePath).toPath());
+      byte[] expected =
+          Files.readAllBytes(new File(expectedContentsFilePath).toPath());
       byte[] actual = Files.readAllBytes(testFile.toPath());
       assertArrayEquals(expected, actual);
     } catch (IOException e) {
@@ -48,7 +50,8 @@ public class TextFileRepositoryGetRandomWordTest {
   @DisplayName("Test correct first line but word is less than 7 characters")
   void testWordTooShort() {
     TextFileRepository repo =
-        new TextFileRepository("src/test/resources/NO_EDIT/word_too_short.txt", null);
+        new TextFileRepository("src/test/resources/NO_EDIT/word_too_short.txt",
+            null);
     assertThrows(RepoException.class, repo::getRandomWord);
   }
 
@@ -56,7 +59,8 @@ public class TextFileRepositoryGetRandomWordTest {
   @DisplayName("Test incorrect first line")
   void testFirstLineIsNotNumber() {
     TextFileRepository repo =
-        new TextFileRepository("src/test/resources/NO_EDIT/invalid_first_line.txt", null);
+        new TextFileRepository(
+            "src/test/resources/NO_EDIT/invalid_first_line.txt", null);
     assertThrows(RepoException.class, repo::getRandomWord);
   }
 
@@ -64,7 +68,8 @@ public class TextFileRepositoryGetRandomWordTest {
   @DisplayName("Test getting random word from existing file")
   void testGetRandomWordSuccess() {
     TextFileRepository repo =
-        new TextFileRepository("src/test/resources/NO_EDIT/3random_words.txt", null);
+        new TextFileRepository("src/test/resources/NO_EDIT/3random_words.txt",
+            null);
     try {
       String wordGotten = repo.getRandomWord();
       List<String> wordsInBank = new ArrayList<>();

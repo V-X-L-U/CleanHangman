@@ -50,7 +50,8 @@ public class GuessWordTest {
   @DisplayName("Single invalid guess")
   void testSingleInvalidGuess() {
     GuessWord guessWord = new GuessWord("racecar");
-    assertThrows(InvalidGuessException.class, () -> guessWord.updateGuessView('1'));
+    assertThrows(InvalidGuessException.class,
+        () -> guessWord.updateGuessView('1'));
     assertEquals("-------", guessWord.getGuessView());
   }
 
@@ -79,7 +80,8 @@ public class GuessWordTest {
       fail("Unexpected guess exception");
     }
 
-    assertThrows(InvalidGuessException.class, () -> guessWord.updateGuessView('@'));
+    assertThrows(InvalidGuessException.class,
+        () -> guessWord.updateGuessView('@'));
     assertEquals("r-----r", guessWord.getGuessView());
   }
 

@@ -35,43 +35,64 @@ import java.util.regex.Pattern;
  * </p>
  */
 public class TextFileRepository implements UserRepository, WordRepository {
-  private final String defaultWordBankFilePath = "../external_interfaces/word_bank.txt";
-  private final String defaultUsersFilePath = "../external_interfaces/users.txt";
+  private final String defaultWordBankFilePath =
+      "../external_interfaces/word_bank.txt";
+  private final String defaultUsersFilePath =
+      "../external_interfaces/users.txt";
 
   private final String usersFilePath;
   private final String wordBankFilePath;
 
+  /**
+   * Initialize a new {@code TextFileRepository}.
+   */
   public TextFileRepository() {
     this.wordBankFilePath = defaultWordBankFilePath;
     this.usersFilePath = defaultUsersFilePath;
   }
 
+  /**
+   * Initialize a new {@code TextFileRepository}.
+   *
+   * @param wordBankFilePath custom word bank file path ({@code null} to use
+   *                         default)
+   * @param usersFilePath custom user records file path ({@code null} to use
+   *                      default)
+   */
   public TextFileRepository(String wordBankFilePath, String usersFilePath) {
-    this.wordBankFilePath = wordBankFilePath == null ? defaultWordBankFilePath : wordBankFilePath;
-    this.usersFilePath = usersFilePath == null ? defaultUsersFilePath : usersFilePath;
+    this.wordBankFilePath =
+        wordBankFilePath == null ? defaultWordBankFilePath : wordBankFilePath;
+    this.usersFilePath =
+        usersFilePath == null ? defaultUsersFilePath : usersFilePath;
   }
 
   // Create the file pointed to by filePath if it doesn't exist yet.
   // Return True iff. the file was successfully created.
-  private boolean createFileIfNotExists(File fileToCreate) throws RepoException {
+  private boolean createFileIfNotExists(File fileToCreate)
+      throws RepoException {
     try {
       return fileToCreate.createNewFile();
     } catch (IOException e) {
       throw new RepoException(
-          String.format("Could not create file: %s", fileToCreate.getAbsolutePath()));
+          String.format("Could not create file: %s",
+              fileToCreate.getAbsolutePath()));
     }
   }
 
   // Validate `userRecord` and instantiate a User object from it.
-  private User instantiateUserFromRecord(String userRecord) throws RepoException {
+  private User instantiateUserFromRecord(String userRecord)
+      throws RepoException {
     String userRecordPattern = "([a-zA-Z0-9]+)#([0-9]+)#([YN])";
-    Matcher userRecordMatcher = Pattern.compile(userRecordPattern).matcher(userRecord);
+    Matcher userRecordMatcher =
+        Pattern.compile(userRecordPattern).matcher(userRecord);
     if (userRecordMatcher.groupCount() != 3) {
-      throw new RepoException(String.format("Invalid user record found: %s", userRecord));
+      throw new RepoException(
+          String.format("Invalid user record found: %s", userRecord));
     }
 
     String userName = userRecordMatcher.group(1);
-    int numWordsSuccessfullyGuessed = Integer.parseInt(userRecordMatcher.group(2));
+    int numWordsSuccessfullyGuessed =
+        Integer.parseInt(userRecordMatcher.group(2));
     boolean isFirstUser = userRecordMatcher.group(3).equals("Y");
 
     return new User(userName, numWordsSuccessfullyGuessed, isFirstUser);
@@ -86,7 +107,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
       return null;
     }
     try {
-      BufferedReader wordBankReader = new BufferedReader(new FileReader(usersFile));
+      BufferedReader wordBankReader =
+          new BufferedReader(new FileReader(usersFile));
       String lineRead = wordBankReader.readLine();
       while (lineRead != null) {
         User userFromRecord = instantiateUserFromRecord(lineRead);
@@ -100,7 +122,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
       return null;
     } catch (IOException e) {
       throw new RepoException(
-          String.format("Could not process user records at %s", usersFile.getAbsolutePath()));
+          String.format("Could not process user records at %s",
+              usersFile.getAbsolutePath()));
     }
   }
 
@@ -111,7 +134,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
   }
 
   private void appendToFile(String filePath, String line) throws IOException {
-    BufferedWriter userRecordsWriter = new BufferedWriter(new FileWriter(filePath, true));
+    BufferedWriter userRecordsWriter =
+        new BufferedWriter(new FileWriter(filePath, true));
     userRecordsWriter.write(line);
     userRecordsWriter.close();
   }
@@ -135,12 +159,14 @@ public class TextFileRepository implements UserRepository, WordRepository {
 
     File usersFile = new File(usersFilePath);
     final boolean usersFileNewlyCreated = createFileIfNotExists(usersFile);
-    User newUser = usersFileNewlyCreated ? new User(userName, 0, true) : new User(userName);
+    User newUser = usersFileNewlyCreated ? new User(userName, 0, true) :
+        new User(userName);
     try {
       appendToFile(usersFilePath, userRecordFromUser(newUser));
     } catch (IOException e) {
       throw new RepoException(
-          String.format("Could not append user record at `%s`", usersFile.getAbsolutePath()));
+          String.format("Could not append user record at `%s`",
+              usersFile.getAbsolutePath()));
     }
 
     return null;
@@ -148,17 +174,20 @@ public class TextFileRepository implements UserRepository, WordRepository {
 
   @Override
   public void removeUser(String userName)
-      throws FirstUserException, NotPermittedException, UserNotFoundException, RepoException {
+      throws FirstUserException, NotPermittedException, UserNotFoundException,
+      RepoException {
     // TODO : implement
   }
 
   @Override
-  public void saveUserInfo(User user) throws UserNotFoundException, RepoException {
+  public void saveUserInfo(User user)
+      throws UserNotFoundException, RepoException {
     // TODO : implement
   }
 
   @Override
-  public User getUserInfo(String userName) throws UserNotFoundException, RepoException {
+  public User getUserInfo(String userName)
+      throws UserNotFoundException, RepoException {
     User user = findUser(userName);
     if (user == null) {
       throw new UserNotFoundException(userName);
@@ -174,7 +203,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
     if (wordBankNewlyCreated) {
       try {
         appendToFile(wordBankFilePath, "1\n");
-        appendToFile(wordBankFilePath, String.format("%s\n", defaultWordToGuess));
+        appendToFile(wordBankFilePath,
+            String.format("%s\n", defaultWordToGuess));
         return defaultWordToGuess;
       } catch (IOException e) {
         throw new RepoException(
@@ -185,7 +215,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
 
     String candidateWord = "";
     try {
-      BufferedReader wordBankReader = new BufferedReader(new FileReader(wordBankFilePath));
+      BufferedReader wordBankReader =
+          new BufferedReader(new FileReader(wordBankFilePath));
       String firstLine = wordBankReader.readLine();
       int numTotalWords = Integer.parseInt(firstLine);
       int wordSelectedIndex = (new Random().nextInt(numTotalWords)) + 1;
@@ -193,7 +224,8 @@ public class TextFileRepository implements UserRepository, WordRepository {
       int currentLineIndex = 1;
       while (candidateWord != null) {
         if (!isValidWord(candidateWord)) {
-          throw new RepoException(String.format("Invalid word found: %s", candidateWord));
+          throw new RepoException(
+              String.format("Invalid word found: %s", candidateWord));
         }
         if (currentLineIndex == wordSelectedIndex) {
           wordBankReader.close();
@@ -204,13 +236,15 @@ public class TextFileRepository implements UserRepository, WordRepository {
       }
 
       throw new RepoException(
-          String.format("Selected word index %d out of bounds (total words = %d)",
+          String.format(
+              "Selected word index %d out of bounds (total words = %d)",
               wordSelectedIndex,
               numTotalWords));
     } catch (Exception e) {
       if (e instanceof IOException) {
         throw new RepoException(
-            String.format("Could not process word bank at %s", wordBankFile.getAbsolutePath()));
+            String.format("Could not process word bank at %s",
+                wordBankFile.getAbsolutePath()));
       }
       if (e instanceof NumberFormatException) {
         throw new RepoException(

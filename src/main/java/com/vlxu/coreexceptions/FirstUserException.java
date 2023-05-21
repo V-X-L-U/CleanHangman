@@ -7,6 +7,7 @@ package com.vlxu.coreexceptions;
  */
 public class FirstUserException extends Exception {
   public FirstUserException(String operation) {
-    super(String.format("Operation `%s` not allowed for first user", operation));
+    super(
+        String.format("Operation `%s` not allowed for first user", operation));
   }
 }

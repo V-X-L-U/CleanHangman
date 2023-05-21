@@ -21,7 +21,8 @@ public interface UserRepository {
    * @throws UserExistsException      when a username has been taken
    * @throws RepoException            see {@link RepoException}
    */
-  User addUser(String userName) throws InvalidUserNameException, UserExistsException, RepoException;
+  User addUser(String userName)
+      throws InvalidUserNameException, UserExistsException, RepoException;
 
   /**
    * Removes a user. The first user to be registered can never be removed. They are considered root.
@@ -34,7 +35,8 @@ public interface UserRepository {
    * @throws RepoException         see {@link RepoException}
    */
   void removeUser(String userName)
-      throws FirstUserException, NotPermittedException, UserNotFoundException, RepoException;
+      throws FirstUserException, NotPermittedException, UserNotFoundException,
+      RepoException;
 
   /**
    * Update info on a user.

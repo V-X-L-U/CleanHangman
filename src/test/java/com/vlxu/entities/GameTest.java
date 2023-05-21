@@ -120,7 +120,8 @@ public class GameTest {
   @DisplayName("Single Invalid Guess")
   void testSingleInvalidGuess() {
     Game game = new Game("racecar");
-    assertThrows(InvalidGuessException.class, () -> assertFalse(game.makeGuess('&')));
+    assertThrows(InvalidGuessException.class,
+        () -> assertFalse(game.makeGuess('&')));
     // invalid guesses are not counted in lettersGuessed
     Set<Character> expectedLettersGuessed = new HashSet<>();
     assertGameState(game, "-------", expectedLettersGuessed, 0);
@@ -143,7 +144,8 @@ public class GameTest {
       fail("Unexpected guess exception");
     }
 
-    assertThrows(InvalidGuessException.class, () -> assertFalse(game.makeGuess(')')));
+    assertThrows(InvalidGuessException.class,
+        () -> assertFalse(game.makeGuess(')')));
     assertGameState(game, "-oo------", expectedLettersGuessed, 1);
   }
 }
