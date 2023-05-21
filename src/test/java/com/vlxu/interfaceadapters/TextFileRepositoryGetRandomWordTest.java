@@ -16,6 +16,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class TextFileRepositoryGetRandomWordTest {
+
+  TextFileRepository initRepo(String wordBankFilePath, String usersFilePath) {
+    try {
+      return new TextFileRepository(wordBankFilePath, usersFilePath);
+    } catch (RepoException e) {
+        fail(String.format("Initializing repository unexpectedly failed: %s",
+            e.getMessage()));
+    }
+    fail("Failed to initialize repository");
+    return null;
+  }
+
   @Test
   @DisplayName("Test getting random word from non-existent file")
   void testNewlyCreated() {
@@ -24,52 +36,47 @@ public class TextFileRepositoryGetRandomWordTest {
     File testFile = new File(filePath);
     testFile.delete();
 
-    TextFileRepository repo = new TextFileRepository(filePath, null);
-    try {
-      // test that the default word to guess is returned
-      String wordGotten = repo.getRandomWord();
-      assertEquals("racecar", wordGotten);
-    } catch (RepoException e) {
-      fail(e.getMessage());
+
+    try (TextFileRepository repo = initRepo(filePath, null)) {
+      try {
+        // test that the default word to guess is returned
+        String wordGotten = repo.getRandomWord();
+        assertEquals("racecar", wordGotten);
+      } catch (RepoException e) {
+        fail(e.getMessage());
+      }
+
+      // check file contents are as expected
+      String expectedContentsFilePath =
+          "src/test/resources/NO_EDIT/expected_new_random_word_bank.txt";
+      try {
+        byte[] expected =
+            Files.readAllBytes(new File(expectedContentsFilePath).toPath());
+        byte[] actual = Files.readAllBytes(testFile.toPath());
+        assertArrayEquals(expected, actual);
+      } catch (IOException e) {
+        fail(e.getMessage());
+      }
+    } catch (Exception e) {
+      fail("Unexpected exception");
     }
 
-    // check file contents are as expected
-    String expectedContentsFilePath =
-        "src/test/resources/NO_EDIT/expected_new_random_word_bank.txt";
-    try {
-      byte[] expected =
-          Files.readAllBytes(new File(expectedContentsFilePath).toPath());
-      byte[] actual = Files.readAllBytes(testFile.toPath());
-      assertArrayEquals(expected, actual);
-    } catch (IOException e) {
-      fail(e.getMessage());
-    }
   }
 
   @Test
   @DisplayName("Test correct first line but word is less than 7 characters")
-  void testWordTooShort() {
-    TextFileRepository repo =
-        new TextFileRepository("src/test/resources/NO_EDIT/word_too_short.txt",
-            null);
-    assertThrows(RepoException.class, repo::getRandomWord);
-  }
-
-  @Test
-  @DisplayName("Test incorrect first line")
-  void testFirstLineIsNotNumber() {
-    TextFileRepository repo =
-        new TextFileRepository(
-            "src/test/resources/NO_EDIT/invalid_first_line.txt", null);
-    assertThrows(RepoException.class, repo::getRandomWord);
+  void testWordTooShort() throws Exception {
+    final String filePath = "src/test/resources/NO_EDIT/word_too_short.txt";
+    try (TextFileRepository repo = initRepo(filePath, null)) {
+      assertThrows(RepoException.class, repo::getRandomWord);
+    }
   }
 
   @Test
   @DisplayName("Test getting random word from existing file")
   void testGetRandomWordSuccess() {
-    TextFileRepository repo =
-        new TextFileRepository("src/test/resources/NO_EDIT/3random_words.txt",
-            null);
+    final String filePath = "src/test/resources/NO_EDIT/3random_words.txt";
+    TextFileRepository repo = initRepo(filePath, null);
     try {
       String wordGotten = repo.getRandomWord();
       List<String> wordsInBank = new ArrayList<>();
