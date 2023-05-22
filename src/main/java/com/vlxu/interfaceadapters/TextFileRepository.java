@@ -39,12 +39,14 @@ public class TextFileRepository
       "../../../../resources/word_bank.txt";
   private static final String defaultUsersFilePath =
       "../../../../resources/users.txt";
-
+  private static final String defaultWordToGuess = "racecar";
   private final String usersFilePath;
   private final String wordBankFilePath;
 
-  private final List<String> userRecords;
+  private final List<User> userRecords;
   private final List<String> wordBank;
+
+  private User signedInUser;
 
   /**
    * Initialize a new {@code TextFileRepository} with default file paths for
@@ -56,7 +58,8 @@ public class TextFileRepository
   }
 
   /**
-   * Initialize a new {@code TextFileRepository}.
+   * Initialize a new {@code TextFileRepository}. This repository will create
+   * all files as needed, if they don't exist yet.
    *
    * @param wordBankFilePath custom word bank file path ({@code null} to use
    *                         default)
@@ -75,7 +78,7 @@ public class TextFileRepository
         createFileIfNotExists(wordBankFile);
     if (wordBankFileNewlyCreated) {
       this.wordBank = new ArrayList<>();
-      this.wordBank.add("racecar");
+      this.wordBank.add(defaultWordToGuess);
     } else {
       this.wordBank = this.loadFromFile(wordBankFile);
     }
@@ -83,10 +86,11 @@ public class TextFileRepository
 
     File usersFile = new File(this.usersFilePath);
     final boolean usersFilePathNewlyCreated = createFileIfNotExists(usersFile);
-    if (usersFilePathNewlyCreated) {
-      this.userRecords = new ArrayList<>();
-    } else {
-      this.userRecords = this.loadFromFile(usersFile);
+    this.userRecords = new ArrayList<>();
+    if (!usersFilePathNewlyCreated) {
+      for (String record : this.loadFromFile(usersFile)) {
+        userRecords.add(instantiateUserFromRecord(record));
+      }
     }
   }
 
@@ -109,7 +113,7 @@ public class TextFileRepository
     String userRecordPattern = "([a-zA-Z0-9]+)#([0-9]+)#([YN])";
     Matcher userRecordMatcher =
         Pattern.compile(userRecordPattern).matcher(userRecord);
-    if (userRecordMatcher.groupCount() != 3) {
+    if (!userRecordMatcher.matches()) {
       throw new RepoException(
           String.format("Invalid user record found: %s", userRecord));
     }
@@ -124,7 +128,7 @@ public class TextFileRepository
 
   // Returns a user record from `user` and adds a newline.
   private String userRecordFromUser(User user) {
-    return String.format("%s#%d#%s\n", user.getUserName(), user.getNumSuccess(),
+    return String.format("%s#%d#%s", user.getUserName(), user.getNumSuccess(),
         user.getIsRoot() ? "Y" : "N");
   }
 
@@ -153,36 +157,87 @@ public class TextFileRepository
     }
   }
 
+  // Returns the index of user `userName` in userRecords.
+  private int findUser(String userName) throws UserNotFoundException {
+    int i = 0;
+    User userFromRecord;
+    boolean userFound = false;
+    while (i < this.userRecords.size() && !userFound) {
+      userFromRecord = userRecords.get(i);
+      userFound = userFromRecord.getUserName().equals(userName);
+      i++;
+    }
+    i--;
+
+    if (!userFound)
+      throw new UserNotFoundException(userName);
+
+    return i;
+  }
+
   @Override
   public User addUser(String userName)
-      throws InvalidUserNameException, UserExistsException, RepoException {
+      throws InvalidUserNameException, UserExistsException {
     final boolean isValidUserName = Pattern.matches("[a-zA-Z0-9]+", userName);
     if (!isValidUserName) {
       throw new InvalidUserNameException();
     }
 
-    // TODO : implement
-    return null;
+    for (User user : userRecords) {
+      if (user.getUserName().equals(userName)) {
+        throw new UserExistsException(userName);
+      }
+    }
+
+    final boolean isFirstUser = userRecords.isEmpty();
+    User newUser = new User(userName, 0, isFirstUser);
+    userRecords.add(newUser);
+
+    return newUser;
   }
 
   @Override
   public void removeUser(String userName)
       throws FirstUserException, NotPermittedException, UserNotFoundException,
       RepoException {
-    // TODO : implement
+    if (signedInUser == null || !signedInUser.getIsRoot()) {
+      throw new NotPermittedException(String.format("Delete user %s", userName),
+          "Logged in as root user");
+    }
+
+    User userFromRecord = null;
+    int indexToDelete = 0;
+    boolean userFound = false;
+    while (indexToDelete < userRecords.size() && !userFound) {
+      userFromRecord = userRecords.get(indexToDelete);
+      userFound = userFromRecord.getUserName().equals(userName);
+      indexToDelete++;
+    }
+    indexToDelete--;
+
+    if (!userFound) {
+      throw new UserNotFoundException(userName);
+    }
+
+    if (userFromRecord.getIsRoot()) {
+      throw new FirstUserException(String.format("Delete user %s", userName));
+    }
+
+    userRecords.remove(indexToDelete);
   }
 
   @Override
   public void saveUserInfo(User user)
-      throws UserNotFoundException, RepoException {
-    // TODO : implement
+      throws UserNotFoundException {
+    int userIndex = findUser(user.getUserName());
+    userRecords.set(userIndex, user);
   }
 
   @Override
   public User getUserInfo(String userName)
-      throws UserNotFoundException, RepoException {
-    // TODO : implement
-    return null;
+      throws UserNotFoundException {
+    int userIndex = findUser(userName);
+    return userRecords.get(userIndex);
   }
 
   @Override
@@ -202,7 +257,12 @@ public class TextFileRepository
   }
 
   @Override
-  public void close() throws Exception {
-
+  public void close() throws RepoException {
+    List<String> records = new ArrayList<>();
+    for (User user: userRecords) {
+      records.add(userRecordFromUser(user));
+    }
+    saveToFile(records, new File(usersFilePath));
+    saveToFile(wordBank, new File(wordBankFilePath));
   }
 }
