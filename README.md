@@ -55,3 +55,13 @@ See UMLs [here](https://drive.google.com/file/d/1FNpa_FpKb1q6PPdpMBOgtjBByZgz4Da
 ### `PlayGameUseCase`
   - Start game
   - Make guess
+
+## Interface Adapters
+
+### `TextFileRepository`
+
+In Clean Architecture, interface adapters generally only translate an external
+interface into something that our entities and use cases can understand. In
+the `TextFileRepository` implementation, however, the repository performs some
+rather involved logic. In particular, it is implementing the logic of storing
+data in text files.
