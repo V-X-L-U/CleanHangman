@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.vlxu.coreexceptions.InvalidGuessException;
+import com.vlxu.coreexceptions.InvalidGuessWord;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -23,12 +24,19 @@ public class GameTest {
     assertEquals(expectedLettersGuessed, game.getLettersGuessed());
     assertEquals(expectedNumWrongGuesses, game.getNumWrongGuesses());
   }
+  private Game initGame(String wordToGuess) {
+    try {
+      return new Game(wordToGuess);
+    } catch (InvalidGuessWord e) {
+      fail(e.getMessage());
+    }
+    return null;
+  }
 
   @Test
   @DisplayName("Test basic initialization")
   void testInit() {
-    Game game = new Game("racecar");
-
+    Game game = initGame("racecar");
     assertEquals(0, game.getLettersGuessed().size());
     assertEquals("-------", game.getGuessView());
     assertEquals(0, game.getNumWrongGuesses());
@@ -37,7 +45,7 @@ public class GameTest {
   @Test
   @DisplayName("Single correct guess")
   void testSingleCorrectGuess() {
-    Game game = new Game("racecar");
+    Game game = initGame("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
       assertTrue(game.makeGuess('e'));
@@ -51,7 +59,7 @@ public class GameTest {
   @Test
   @DisplayName("Single correct guess with multiple instances")
   void testSingleCorrectGuessMultipleInstances() {
-    Game game = new Game("racecar");
+    Game game = initGame("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
       game.makeGuess('a');
@@ -65,7 +73,7 @@ public class GameTest {
   @Test
   @DisplayName("Multiple correct guess")
   void testMultipleCorrectGuesses() {
-    Game game = new Game("racecar");
+    Game game = initGame("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
       assertTrue(game.makeGuess('a'));
@@ -85,7 +93,7 @@ public class GameTest {
   @Test
   @DisplayName("Single Incorrect Guess")
   void testSingleIncorrectGuess() {
-    Game game = new Game("racecar");
+    Game game = initGame("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
       assertFalse(game.makeGuess('z'));
@@ -99,7 +107,7 @@ public class GameTest {
   @Test
   @DisplayName("Multiple Incorrect Guess")
   void testMultipleIncorrectGuess() {
-    Game game = new Game("racecar");
+    Game game = initGame("racecar");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
       assertFalse(game.makeGuess('z'));
@@ -119,7 +127,7 @@ public class GameTest {
   @Test
   @DisplayName("Single Invalid Guess")
   void testSingleInvalidGuess() {
-    Game game = new Game("racecar");
+    Game game = initGame("racecar");
     assertThrows(InvalidGuessException.class,
         () -> assertFalse(game.makeGuess('&')));
     // invalid guesses are not counted in lettersGuessed
@@ -130,7 +138,7 @@ public class GameTest {
   @Test
   @DisplayName("Combined: single incorrect, single correct, single invalid")
   void testCombined1() {
-    Game game = new Game("moonlight");
+    Game game = initGame("moonlight");
     Set<Character> expectedLettersGuessed = new HashSet<>();
     try {
       assertFalse(game.makeGuess('z'));

@@ -6,6 +6,7 @@ import com.vlxu.coreexceptions.NotPermittedException;
 import com.vlxu.coreexceptions.RepoException;
 import com.vlxu.coreexceptions.UserExistsException;
 import com.vlxu.coreexceptions.UserNotFoundException;
+import com.vlxu.entities.GuessWord;
 import com.vlxu.entities.User;
 import com.vlxu.entities.UserRepository;
 import com.vlxu.entities.WordRepository;
@@ -133,7 +134,7 @@ public class TextFileRepository
   }
 
   private boolean isValidWord(String word) {
-    return Pattern.matches("[a-z]{7,21}", word);
+    return GuessWord.isValidGuessWord(word);
   }
 
   private List<String> loadFromFile(File fileToLoad) throws RepoException {

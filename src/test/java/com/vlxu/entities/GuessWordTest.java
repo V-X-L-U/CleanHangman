@@ -5,15 +5,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.vlxu.coreexceptions.InvalidGuessException;
+import com.vlxu.coreexceptions.InvalidGuessWord;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class GuessWordTest {
+  GuessWord initGuessWord(String guessWord) {
+    try {
+      return new GuessWord(guessWord);
+    } catch (InvalidGuessWord e) {
+      fail(e.getMessage());
+    }
+    return null;
+  }
+
   @Test
   @DisplayName("Basic Initialization test")
   void testInit() {
-    GuessWord guessWord = new GuessWord("racecar");
+    GuessWord guessWord = initGuessWord("racecar");
     assertEquals("racecar", guessWord.getWord());
     assertEquals("-------", guessWord.getGuessView());
   }
@@ -21,7 +31,7 @@ public class GuessWordTest {
   @Test
   @DisplayName("Single guess view update")
   void testSingleGuessViewUpdate() {
-    GuessWord guessWord = new GuessWord("racecar");
+    GuessWord guessWord = initGuessWord("racecar");
     try {
       guessWord.updateGuessView('r');
     } catch (InvalidGuessException e) {
@@ -33,7 +43,7 @@ public class GuessWordTest {
   @Test
   @DisplayName("Multiple guess view update")
   void testMultipleGuessViewUpdate() {
-    GuessWord guessWord = new GuessWord("racecar");
+    GuessWord guessWord = initGuessWord("racecar");
     try {
       guessWord.updateGuessView('r');
       assertEquals("r-----r", guessWord.getGuessView());
@@ -49,7 +59,7 @@ public class GuessWordTest {
   @Test
   @DisplayName("Single invalid guess")
   void testSingleInvalidGuess() {
-    GuessWord guessWord = new GuessWord("racecar");
+    GuessWord guessWord = initGuessWord("racecar");
     assertThrows(InvalidGuessException.class,
         () -> guessWord.updateGuessView('1'));
     assertEquals("-------", guessWord.getGuessView());
@@ -58,7 +68,7 @@ public class GuessWordTest {
   @Test
   @DisplayName("Single wrong guess")
   void testSingleWrongGuess() {
-    GuessWord guessWord = new GuessWord("racecar");
+    GuessWord guessWord = initGuessWord("racecar");
     try {
       guessWord.updateGuessView('w');
       assertEquals("-------", guessWord.getGuessView());
@@ -70,7 +80,7 @@ public class GuessWordTest {
   @Test
   @DisplayName("Combined: success, wrong guess, invalid guess")
   void testCombined1() {
-    GuessWord guessWord = new GuessWord("racecar");
+    GuessWord guessWord = initGuessWord("racecar");
     try {
       guessWord.updateGuessView('r');
       assertEquals("r-----r", guessWord.getGuessView());
@@ -86,9 +96,8 @@ public class GuessWordTest {
   }
 
   @Test
-  @Disabled("Not yet implemented")
-  @DisplayName("All words must comprise of only [a-z]")
+  @DisplayName("Capital letters in word-to-guess should be invalid")
   void testCapitalLettersInWord() {
-    // TODO : implement
+    assertThrows(InvalidGuessWord.class, () -> new GuessWord("Racecar"));
   }
 }
