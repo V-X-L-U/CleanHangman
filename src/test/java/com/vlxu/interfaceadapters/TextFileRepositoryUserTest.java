@@ -6,19 +6,33 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.vlxu.coreexceptions.FirstUserException;
 import com.vlxu.coreexceptions.InvalidUserNameException;
+import com.vlxu.coreexceptions.NotPermittedException;
 import com.vlxu.coreexceptions.RepoException;
 import com.vlxu.coreexceptions.UserExistsException;
+import com.vlxu.coreexceptions.UserNotFoundException;
 import com.vlxu.entities.User;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class TextFileRepositoryUserTest {
+  static final String NO_EDIT = "src/test/resources/NO_EDIT";
+  static final String AUTO_GEN = "src/test/resources/AUTO_GEN";
+
+  String getAutoGenFilePath(String fileName) {
+    return String.format("%s/%s", AUTO_GEN, fileName);
+  }
+
+  String getNoEditFilePath(String fileName) {
+    return String.format("%s/%s", NO_EDIT, fileName);
+  }
 
   TextFileRepository initRepo(String wordBankFilePath, String usersFilePath) {
     try {
@@ -136,6 +150,102 @@ public class TextFileRepositoryUserTest {
     try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
       assertThrows(InvalidUserNameException.class,
           () -> repo.addUser(invalidUserName));
+    } catch (RepoException e) {
+      fail(e.getMessage());
+    }
+
+    assertFileContentsAreEqual(referenceFilePath, testFilePath);
+  }
+
+  @Test
+  @DisplayName("Save updated user info")
+  void testSaveUserInfo() {
+    String referenceFilePath = "src/test/resources/NO_EDIT/sample_users.txt";
+    String testFilePath = "src/test/resources/AUTO_GEN/testSaveUserInfo.txt";
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String userNameToSave = "nevan";
+    User userToSave = new User(userNameToSave, 11720, false);
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      repo.saveUserInfo(userToSave);
+    } catch (RepoException | UserNotFoundException | NotPermittedException e) {
+      fail(e.getMessage());
+    }
+
+    String expectedFilePath =
+        "src/test/resources/NO_EDIT/expectedTestSaveUserInfo.txt";
+    assertFileContentsAreEqual(expectedFilePath, testFilePath);
+  }
+
+  @Test
+  @DisplayName("Save user info for non-existent user")
+  void testSaveUserInfoNotExists() {
+    String referenceFilePath = getNoEditFilePath("sample_users.txt");
+    String testFilePath = getAutoGenFilePath("testSaveUserInfoNotExists.txt");
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String userNameToSave = "NotExist";
+    User userToSave = new User(userNameToSave, 11720, false);
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      assertThrows(UserNotFoundException.class,
+          () -> repo.saveUserInfo(userToSave));
+    } catch (RepoException e) {
+      fail(e.getMessage());
+    }
+
+    assertFileContentsAreEqual(referenceFilePath, testFilePath);
+  }
+
+  // TODO : test modifying user privileges
+  @Test
+  @DisplayName("Update user root privileges")
+  void testSaveUserUpdateRoot() {
+    String referenceFilePath = getNoEditFilePath("sample_users.txt");
+    String testFilePath = getAutoGenFilePath("testSaveUserUpdateRoot.txt");
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String rootUserName = "vallens";
+    User userToSave = new User(rootUserName, 11720, false);
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      assertThrows(NotPermittedException.class,
+          () -> repo.saveUserInfo(userToSave));
+    } catch (RepoException e) {
+      fail(e.getMessage());
+    }
+
+    assertFileContentsAreEqual(referenceFilePath, testFilePath);
+  }
+
+  @Test
+  @DisplayName("Get info on existing user")
+  void testGetUserInfo() {
+    String referenceFilePath = getNoEditFilePath("sample_users.txt") ;
+    String testFilePath = getAutoGenFilePath("testGetUserInfo.txt") ;
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String rootUserName = "vallens";
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      User retrievedUserInfo = repo.getUserInfo(rootUserName);
+      assertEquals(rootUserName, retrievedUserInfo.getUserName());
+      assertEquals(10, retrievedUserInfo.getNumSuccess());
+      assertTrue(retrievedUserInfo.getIsRoot());
+    } catch (RepoException | UserNotFoundException e) {
+      fail(e.getMessage());
+    }
+
+    assertFileContentsAreEqual(referenceFilePath, testFilePath);
+  }
+
+  @Test
+  @DisplayName("Get info non-existent user")
+  void testGetUserInfoNotExists() {
+    String referenceFilePath = getNoEditFilePath("sample_users.txt");
+    String testFilePath = getAutoGenFilePath("testGetUserInfoNotExists.txt");
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String notExistsUser = "NotExists";
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      assertThrows(UserNotFoundException.class, () -> repo.getUserInfo(notExistsUser));
     } catch (RepoException e) {
       fail(e.getMessage());
     }

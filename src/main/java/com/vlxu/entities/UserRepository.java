@@ -45,7 +45,8 @@ public interface UserRepository {
    * @throws UserNotFoundException when the user-to-update does not exist
    * @throws RepoException         see {@link RepoException}
    */
-  void saveUserInfo(User user) throws UserNotFoundException, RepoException;
+  void saveUserInfo(User user) throws UserNotFoundException, RepoException,
+      NotPermittedException;
 
   /**
    * Retrieve info on user {@param userName}.

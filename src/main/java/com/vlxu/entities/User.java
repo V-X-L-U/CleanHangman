@@ -26,6 +26,7 @@ public class User {
    * @param isRoot                   whether this user has root permissions
    */
   public User(String userName, int wordsSuccessfullyGuessed, boolean isRoot) {
+    // TODO : implement validation for wordsSuccessfullyGuessed
     this.userName = userName;
     numSuccess = wordsSuccessfullyGuessed;
     this.isRoot = isRoot;

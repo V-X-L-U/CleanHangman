@@ -169,8 +169,9 @@ public class TextFileRepository
     }
     i--;
 
-    if (!userFound)
+    if (!userFound) {
       throw new UserNotFoundException(userName);
+    }
 
     return i;
   }
@@ -228,8 +229,13 @@ public class TextFileRepository
 
   @Override
   public void saveUserInfo(User user)
-      throws UserNotFoundException {
+      throws UserNotFoundException, NotPermittedException {
     int userIndex = findUser(user.getUserName());
+    User userToUpdate = userRecords.get(userIndex);
+    if (userToUpdate.getIsRoot() != user.getIsRoot()) {
+      throw new NotPermittedException("Cannot change user privileges",
+          "No Permissions available");
+    }
     userRecords.set(userIndex, user);
   }
 
@@ -259,7 +265,7 @@ public class TextFileRepository
   @Override
   public void close() throws RepoException {
     List<String> records = new ArrayList<>();
-    for (User user: userRecords) {
+    for (User user : userRecords) {
       records.add(userRecordFromUser(user));
     }
     saveToFile(records, new File(usersFilePath));
