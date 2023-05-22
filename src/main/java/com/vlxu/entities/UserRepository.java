@@ -56,4 +56,16 @@ public interface UserRepository {
    * @throws RepoException         see {@link RepoException}
    */
   User getUserInfo(String userName) throws UserNotFoundException, RepoException;
+
+  /**
+   * Authenticate a user to the repository.
+   *
+   * <p>Note: the initial version will only require a correct username for
+   * authentication; no passwords are needed </p>
+   *
+   * @param userName the username of the account to log into
+   * @throws UserNotFoundException when the username to log into does not exist
+   * @throws RepoException see {@link RepoException}
+   */
+  void login(String userName) throws UserNotFoundException, RepoException;
 }

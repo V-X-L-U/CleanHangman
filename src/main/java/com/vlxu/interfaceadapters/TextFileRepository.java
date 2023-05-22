@@ -199,8 +199,7 @@ public class TextFileRepository
 
   @Override
   public void removeUser(String userName)
-      throws FirstUserException, NotPermittedException, UserNotFoundException,
-      RepoException {
+      throws FirstUserException, NotPermittedException, UserNotFoundException {
     if (signedInUser == null || !signedInUser.getIsRoot()) {
       throw new NotPermittedException(String.format("Delete user %s", userName),
           "Logged in as root user");
@@ -260,6 +259,10 @@ public class TextFileRepository
     }
 
     return selectedWord;
+  }
+  @Override
+  public void login(String userName) throws UserNotFoundException {
+    signedInUser = getUserInfo(userName);
   }
 
   @Override
