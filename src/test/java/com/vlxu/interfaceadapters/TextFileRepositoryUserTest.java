@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Text;
 
 public class TextFileRepositoryUserTest {
   static final String NO_EDIT = "src/test/resources/NO_EDIT";
@@ -158,6 +158,98 @@ public class TextFileRepositoryUserTest {
   }
 
   @Test
+  @DisplayName("Remove existing user that is not root")
+  void testRemoveUser() {
+    String referenceFilePath = getNoEditFilePath("sample_users.txt");
+    String testFilePath = getAutoGenFilePath("testRemoveUser");
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String userNameToRemove = "nevan";
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      repo.login("vallens");
+      repo.removeUser(userNameToRemove);
+    } catch (RepoException | UserNotFoundException | FirstUserException |
+             NotPermittedException e) {
+      fail(e.getMessage());
+    }
+
+    String expectedFilePath = getNoEditFilePath("expectedTestRemoveUser.txt");
+    assertFileContentsAreEqual(expectedFilePath, testFilePath);
+  }
+
+  @Test
+  @DisplayName("Remove existing user that is root")
+  void testRemoveRootUser() {
+    String referenceFilePath = getNoEditFilePath("sample_users.txt");
+    String testFilePath = getAutoGenFilePath("testRemoveRootUser");
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String userNameToRemove = "vallens";
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      repo.login("vallens");
+      assertThrows(FirstUserException.class, () -> repo.removeUser(userNameToRemove));
+    } catch (RepoException | UserNotFoundException e) {
+      fail(e.getMessage());
+    }
+
+    assertFileContentsAreEqual(referenceFilePath, testFilePath);
+  }
+
+  @Test
+  @DisplayName("Remove non-existent user")
+  void testRemoveUserNotExists() {
+    String referenceFilePath = getNoEditFilePath("sample_users.txt");
+    String testFilePath = getAutoGenFilePath("testRemoveUserNotExists");
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String userNameToRemove = "NotExists";
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      repo.login("vallens");
+      assertThrows(UserNotFoundException.class, () -> repo.removeUser(userNameToRemove));
+    } catch (RepoException | UserNotFoundException e) {
+      fail(e.getMessage());
+    }
+
+    assertFileContentsAreEqual(referenceFilePath, testFilePath);
+  }
+
+  @Test
+  @DisplayName("Remove user without root")
+  void testRemoveUserWithoutRoot() {
+    String referenceFilePath = getNoEditFilePath("sample_users.txt");
+    String testFilePath = getAutoGenFilePath("testRemoveUserWithoutRoot");
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String userNameToRemove = "nevan";
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      repo.login("hello");
+      assertThrows(NotPermittedException.class, () -> repo.removeUser(userNameToRemove));
+    } catch (RepoException | UserNotFoundException e) {
+      fail(e.getMessage());
+    }
+
+    assertFileContentsAreEqual(referenceFilePath, testFilePath);
+  }
+
+  @Test
+  @DisplayName("Remove user without login")
+  void testRemoveUserWithoutLogin() {
+    String referenceFilePath = getNoEditFilePath("sample_users.txt");
+    String testFilePath = getAutoGenFilePath("testRemoveUserWithoutLogin");
+    setupTestFiles(referenceFilePath, testFilePath);
+
+    String userNameToRemove = "nevan";
+    try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
+      // no login
+      assertThrows(NotPermittedException.class, () -> repo.removeUser(userNameToRemove));
+    } catch (RepoException e) {
+      fail(e.getMessage());
+    }
+
+    assertFileContentsAreEqual(referenceFilePath, testFilePath);
+  }
+
+  @Test
   @DisplayName("Save updated user info")
   void testSaveUserInfo() {
     String referenceFilePath = "src/test/resources/NO_EDIT/sample_users.txt";
@@ -219,8 +311,8 @@ public class TextFileRepositoryUserTest {
   @Test
   @DisplayName("Get info on existing user")
   void testGetUserInfo() {
-    String referenceFilePath = getNoEditFilePath("sample_users.txt") ;
-    String testFilePath = getAutoGenFilePath("testGetUserInfo.txt") ;
+    String referenceFilePath = getNoEditFilePath("sample_users.txt");
+    String testFilePath = getAutoGenFilePath("testGetUserInfo.txt");
     setupTestFiles(referenceFilePath, testFilePath);
 
     String rootUserName = "vallens";
@@ -245,7 +337,8 @@ public class TextFileRepositoryUserTest {
 
     String notExistsUser = "NotExists";
     try (TextFileRepository repo = new TextFileRepository(null, testFilePath)) {
-      assertThrows(UserNotFoundException.class, () -> repo.getUserInfo(notExistsUser));
+      assertThrows(UserNotFoundException.class,
+          () -> repo.getUserInfo(notExistsUser));
     } catch (RepoException e) {
       fail(e.getMessage());
     }

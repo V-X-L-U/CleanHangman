@@ -21,8 +21,8 @@ public class TextFileRepositoryGetRandomWordTest {
     try {
       return new TextFileRepository(wordBankFilePath, usersFilePath);
     } catch (RepoException e) {
-        fail(String.format("Initializing repository unexpectedly failed: %s",
-            e.getMessage()));
+      fail(String.format("Initializing repository unexpectedly failed: %s",
+          e.getMessage()));
     }
     fail("Failed to initialize repository");
     return null;
