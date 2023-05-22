@@ -36,9 +36,9 @@ import java.util.regex.Pattern;
 public class TextFileRepository
     implements UserRepository, WordRepository, AutoCloseable {
   private static final String defaultWordBankFilePath =
-      "src/main/java/resources/word_bank.txt";
+      "src/main/resources/word_bank.txt";
   private static final String defaultUsersFilePath =
-      "src/main/java/resources/users.txt";
+      "src/main/resources/users.txt";
   private static final String defaultWordToGuess = "racecar";
   private final String usersFilePath;
   private final String wordBankFilePath;
