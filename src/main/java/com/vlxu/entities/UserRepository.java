@@ -16,8 +16,9 @@ public interface UserRepository {
    * Registers a new user.
    *
    * @param userName username for the new user
-   * @return a {@link User }containing information about the new user
-   * @throws InvalidUserNameException when a username with invalid format is received
+   * @return a {@link User} containing information about the new user
+   * @throws InvalidUserNameException when a username with invalid format is
+   *                                  received
    * @throws UserExistsException      when a username has been taken
    * @throws RepoException            see {@link RepoException}
    */
@@ -25,12 +26,14 @@ public interface UserRepository {
       throws InvalidUserNameException, UserExistsException, RepoException;
 
   /**
-   * Removes a user. The first user to be registered can never be removed. They are considered root.
+   * Removes a user. The first user to be registered can never be removed.
+   * They are considered root.
    *
    * @param userName username of user that is to be removed
-   * @throws FirstUserException    when an attempt to remove the first user is made
-   * @throws NotPermittedException when the user attempting user removal is not the first user
-   *                               (i.e., not root)
+   * @throws FirstUserException    when an attempt to remove the first user is
+   *                               made
+   * @throws NotPermittedException when the user attempting user removal is
+   *                               not the first user (i.e., not root)
    * @throws UserNotFoundException when {@param userName} does not exist
    * @throws RepoException         see {@link RepoException}
    */
@@ -65,7 +68,7 @@ public interface UserRepository {
    *
    * @param userName the username of the account to log into
    * @throws UserNotFoundException when the username to log into does not exist
-   * @throws RepoException see {@link RepoException}
+   * @throws RepoException         see {@link RepoException}
    */
   void login(String userName) throws UserNotFoundException, RepoException;
 }
