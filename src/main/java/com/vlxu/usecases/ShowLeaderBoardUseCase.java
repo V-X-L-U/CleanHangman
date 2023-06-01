@@ -15,9 +15,9 @@ public class ShowLeaderBoardUseCase
     }
 
     /**
-     * Returns a list of users ranked alphabetically by their username.
+     * Returns a list of all users ranked alphabetically by their username.
      *
-     * @return list of alphabetically sorted users
+     * @return list of all users sorted alphabetically
      * @throws RepoException See {@link RepoException}.
      */
     public List<User> getRankedByName() throws RepoException
@@ -28,9 +28,9 @@ public class ShowLeaderBoardUseCase
     }
 
     /**
-     * Returns a list of users ranked by how many words they have successfully guessed (i.e., their score).
+     * Returns a list of all users ranked by how many words they have successfully guessed (i.e., their score).
      *
-     * @return list of users sorted by score
+     * @return list of all users sorted by score
      * @throws RepoException See {@link RepoException}.
      */
     public List<User> getRankedByScore() throws RepoException {

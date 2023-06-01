@@ -9,7 +9,7 @@ public interface GetAllUserInfo
     /**
      * Returns a list containing all users in the game.
      *
-     * @return list of game users
+     * @return list of all game users
      * @throws RepoException See {@link RepoException}.
      */
     public List<User> getAllUserInfo() throws RepoException;
