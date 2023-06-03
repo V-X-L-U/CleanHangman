@@ -17,7 +17,7 @@ public class Game {
    * Initialize a new game with the word to guess being {@code wordToGuess}.
    *
    * @throws InvalidGuessWord if an invalid word-to-guess was provided.
-   * See {@link GuessWord#isValidGuessWord(String)} for more details on a valid word-to-guess.
+   *                          See {@link GuessWord#isValidGuessWord(String)} for more details on a valid word-to-guess.
    */
   public Game(String wordToGuess) throws InvalidGuessWord {
     guessWord = new GuessWord(wordToGuess);
@@ -67,5 +67,12 @@ public class Game {
    */
   public int getNumWrongGuesses() {
     return numWrongGuesses;
+  }
+
+  /**
+   * Returns whether the guess word has been completely guessed.
+   */
+  public boolean wordIsFullyGuessed() {
+    return guessWord.isFullyGuessed();
   }
 }

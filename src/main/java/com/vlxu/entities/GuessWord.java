@@ -98,4 +98,12 @@ public class GuessWord {
     guessView = newGuessView.toString();
     return guessedCorrectly;
   }
+
+  /**
+   * Returns whether the guess word has been fully guessed (i.e., all letters
+   * has been correctly guessed)
+   */
+  public boolean isFullyGuessed() {
+    return guessView.equals(word);
+  }
 }
