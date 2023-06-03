@@ -47,7 +47,7 @@ public class TextFileRepository
   private final List<User> userRecords;
   private final List<String> wordBank;
 
-  private User signedInUser;
+  private User signedInUser = null;
 
   /**
    * Initialize a new {@code TextFileRepository} with default file paths for
@@ -261,9 +261,19 @@ public class TextFileRepository
 
     return selectedWord;
   }
+
   @Override
   public void login(String userName) throws UserNotFoundException {
     signedInUser = getUserInfo(userName);
+  }
+
+  @Override
+  public User getSignedInUser() throws UserNotFoundException {
+    if (signedInUser == null) {
+      throw new UserNotFoundException("null");
+    }
+    signedInUser = getUserInfo(signedInUser.getUserName());
+    return signedInUser;
   }
 
   @Override

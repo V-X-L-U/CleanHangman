@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ShowLeaderBoardUseCase
 {
-    private GetAllUserInfo getAllUserInfo;
+    private final GetAllUserInfo getAllUserInfo;
 
     public ShowLeaderBoardUseCase(GetAllUserInfo getAllUserInfo)
     {
@@ -28,7 +28,8 @@ public class ShowLeaderBoardUseCase
     }
 
     /**
-     * Returns a list of all users ranked by how many words they have successfully guessed (i.e., their score).
+     * Returns a list of all users ranked by how many words they have
+     * successfully guessed (i.e., their score).
      *
      * @return list of all users sorted by score
      * @throws RepoException See {@link RepoException}.

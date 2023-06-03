@@ -71,4 +71,12 @@ public interface UserRepository {
    * @throws RepoException         see {@link RepoException}
    */
   void login(String userName) throws UserNotFoundException, RepoException;
+
+  /**
+   * Returns the currently signed-in user.
+   *
+   * @throws UserNotFoundException when no user has signed-in
+   * @throws RepoException see {@link RepoException}
+   */
+  User getSignedInUser() throws UserNotFoundException, RepoException;
 }
